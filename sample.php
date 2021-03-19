@@ -8,14 +8,6 @@
   Author URI: http://litty4ever.com/
   License: GPLv2
   */
-  if( !defined('ABSPATH') ) : exit(); endif;
-
-  /**
-   * Define plugin constants
-   */
-  define( 'MYPLUGIN_PATH', trailingslashit( plugin_dir_path(__FILE__) ) );
-  define( 'MYPLUGIN_URL', trailingslashit( plugins_url('/', __FILE__) ) );
-  require_once MYPLUGIN_PATH . 'Settings/settings.php';
   class JobsCustomType{
     // public function __construct(){
     //   add_action( 'init', array($this,'create_movie_review') );
@@ -51,7 +43,15 @@
     }
   }
   class JobsMetabox extends JobsCustomType{
-
+    public function __construct(){
+      add_action( 'init', array($this,'create_jobs') );
+      add_action( 'admin_init', array($this,'my_admin' ));
+      // For calling save_custom_meta_box
+      add_action("save_post", array($this,"save_custom_meta_box"));
+      add_filter('the_content',array($this,'display_front_end'),20,1);
+      // add_action('wp_enqueue_scripts', array($this,'Style_contents'));
+      add_action('admin_menu', array($this,'add_jobs_submenu_example'));
+    }
     public function my_admin() {
     	add_meta_box( 'job_meta_box',
     		'Job Details',
@@ -135,27 +135,18 @@
       return $val . $test;
 
     }
-  }
-
-  class JobsSettings extends JobsMetabox{
-    public function __construct(){
-      add_action( 'init', array($this,'create_jobs') );
-      add_action( 'admin_init', array($this,'my_admin' ));
-      // For calling save_custom_meta_box
-      add_action("save_post", array($this,"save_custom_meta_box"));
-      add_filter('the_content',array($this,'display_front_end'),20,1);
-      // add_action('wp_enqueue_scripts', array($this,'Style_contents'));
-      add_action('admin_menu', array($this,'add_jobs_submenu_example'));
-      add_action( 'admin_init', array($this,'myplugin_settings_init' ));
-    }
+    // public function Style_contents() {
+    //   wp_enqueue_style( 'slider', get_template_directory_uri() . '/css/slide.css',false,'1.1','all');
+    //
+    // }
     function add_jobs_submenu_example(){
 
      add_submenu_page(
                      'edit.php?post_type=jobs', //$parent_slug
-                     'Admin Page',  //$page_title
+                     'Admin ',  //$page_title
                      'Settings',        //$menu_title
                      'manage_options',           //$capability
-                     'myplugin-settings-page',//$menu_slug
+                     'settings_submenu',//$menu_slug
                      array($this,'jobs_submenu_render_page')//$function
      );
     }
@@ -163,22 +154,11 @@
 //add_submenu_page callback function
 
     function jobs_submenu_render_page($result) {
+      wp_nonce_field(basename(__FILE__), "meta-box-nonce");
       ?>
       <div class="container">
-        <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-        <form action="options.php" method="post">
-          <?php
-              // security field
-              settings_fields( 'myplugin-settings-page' );
-
-              // output settings section here
-              do_settings_sections('myplugin-settings-page');
-
-              // save settings button
-              submit_button( 'Save Settings' );
-          ?>
-        </form>
-        <!-- <table class="form-table">
+        <h1>Admin Page</h1>
+        <table class="form-table">
           <tbody>
             <tr>
               <th scope="row"><label for="name">Organization name</label></th>
@@ -214,50 +194,15 @@
             </tr>
           </tbody>
 
-        </table> -->
+        </table>
 
 
       </div>
       <?php
     }
-    function myplugin_settings_init() {
 
-      // Setup settings section
-      add_settings_section(
-          'myplugin_settings_section',
-          'Myplugin Settings Page',
-          '',
-          'myplugin-settings-page'
-      );
-
-      // Registe input field
-      register_setting(
-          'myplugin-settings-page',
-          'myplugin_settings_input_field',
-          array(
-              'type' => 'string',
-              'sanitize_callback' => 'sanitize_text_field',
-              'default' => ''
-          )
-      );
-
-      // Add text fields
-      add_settings_field(
-          'myplugin_settings_input_field',
-          __( 'Input Field', 'my-plugin' ),
-          array($this,'myplugin_settings_input_field_callback'),
-          'myplugin-settings-page',
-          'myplugin_settings_section'
-      );
-    }
-    function myplugin_settings_input_field_callback() {
-      $myplugin_input_field = get_option('myplugin_settings_input_field');
-      ?>
-      <input type="text" name="myplugin_settings_input_field" class="regular-text" value="<?php echo isset($myplugin_input_field) ? esc_attr( $myplugin_input_field ) : ''; ?>" />
-      <?php
-    }
   }
-  new JobsSettings();
+  new JobsMetabox();
   // For debugging purpose
   if (!function_exists('write_log')) {
   	function write_log ( $log )  {
