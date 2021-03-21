@@ -179,7 +179,7 @@
       // Registe input field
       register_setting(
           'myplugin-settings-page',
-          'myplugin_settings_input_field',
+          'myplugin_settings_organization_name_field',
           array(
               'type' => 'string',
               'sanitize_callback' => 'sanitize_text_field',
@@ -189,16 +189,16 @@
 
       // Add text fields
       add_settings_field(
-          'myplugin_settings_input_field',
+          'myplugin_settings_organization_name_field',
           __( 'Organization name', 'my-plugin' ),
-          array($this,'myplugin_settings_input_field_callback'),
+          array($this,'myplugin_settings_organization_name_field_callback'),
           'myplugin-settings-page',
           'myplugin_settings_section'
       );
       // Registe textarea field
 	    register_setting(
 	        'myplugin-settings-page',
-	        'myplugin_settings_textarea_field',
+	        'myplugin_settings_description_field',
 	        array(
 	            'type' => 'string',
 	            'sanitize_callback' => 'sanitize_textarea_field',
@@ -208,9 +208,9 @@
 
 	     // Add textarea fields
 	     add_settings_field(
-	        'myplugin_settings_textarea_field',
+	        'myplugin_settings_description_field',
 	        __( 'Description', 'my-plugin' ),
-	        array($this,'myplugin_settings_textarea_field_callback'),
+	        array($this,'myplugin_settings_description_field_callback'),
 	        'myplugin-settings-page',
 	        'myplugin_settings_section'
 	    );
@@ -236,7 +236,7 @@
       // Register radio field
     register_setting(
         'myplugin-settings-page',
-        'myplugin_settings_radio_field',
+        'myplugin_settings_title_visibility_field',
         array(
             'type' => 'string',
             'sanitize_callback' => 'sanitize_text_field',
@@ -246,16 +246,16 @@
 
     // Add radio fields
     add_settings_field(
-        'myplugin_settings_radio_field',
+        'myplugin_settings_title_visibility_field',
         __( 'Display options', 'my-plugin' ),
-        array($this,'myplugin_settings_radio_field_callback'),
+        array($this,'myplugin_settings_title_visibility_field_callback'),
         'myplugin-settings-page',
         'myplugin_settings_section'
     );
 
         register_setting(
         'myplugin-settings-page',
-        'myplugin_settings_checkbox_field',
+        'myplugin_settings_email_visibilty_field',
         array(
             'type' => 'string',
             'sanitize_callback' => 'sanitize_text_field',
@@ -265,9 +265,9 @@
 
     // Add radio fields
     add_settings_field(
-        'myplugin_settings_checkbox_field',
+        'myplugin_settings_email_visibilty_field',
         __( 'Display options', 'my-plugin' ),
-        array($this,'myplugin_settings_checkbox_field_callback'),
+        array($this,'myplugin_settings_email_visibilty_field_callback'),
         'myplugin-settings-page',
         'myplugin_settings_section'
     );
@@ -310,19 +310,19 @@
           'myplugin_settings_section'
       );
     }
-    function myplugin_settings_input_field_callback() {
-      $myplugin_input_field = get_option('myplugin_settings_input_field');
+    function myplugin_settings_organization_name_field_callback() {
+      $myplugin_organization_name_field = get_option('myplugin_settings_organization_name_field');
       ?>
-      <input type="text" name="myplugin_settings_input_field" class="regular-text" value="<?php echo isset($myplugin_input_field) ? esc_attr( $myplugin_input_field ) : ''; ?>" />
+      <input type="text" name="myplugin_settings_organization_name_field" class="regular-text" value="<?php echo isset($myplugin_organization_name_field) ? esc_attr( $myplugin_organization_name_field ) : ''; ?>" />
       <?php
     }
     /**
 	 * textarea template
 	 */
-	function myplugin_settings_textarea_field_callback() {
-	    $myplugin_textarea_field = get_option('myplugin_settings_textarea_field');
+	function myplugin_settings_description_field_callback() {
+	    $myplugin_description_field = get_option('myplugin_settings_description_field');
 	    ?>
-	    <textarea name="myplugin_settings_textarea_field" class="widefat" rows="10"><?php echo isset($myplugin_textarea_field) ? esc_textarea( $myplugin_textarea_field ) : ''; ?></textarea>
+	    <textarea name="myplugin_settings_description_field" class="widefat" rows="10"><?php echo isset($myplugin_description_field) ? esc_textarea( $myplugin_description_field ) : ''; ?></textarea>
 	    <?php 
 	}
 	function myplugin_settings_vacancy_field_callback() {
@@ -334,21 +334,21 @@
     /**
 	 * radio field tempalte
 	 */
-	function myplugin_settings_radio_field_callback() {
-	    $myplugin_radio_field = get_option( 'myplugin_settings_radio_field' );
+	function myplugin_settings_title_visibility_field_callback() {
+	    $myplugin_title_visibility_field = get_option( 'myplugin_settings_title_visibility_field' );
 	    ?>
 	    <label for="value1">
-	        <input type="radio" name="myplugin_settings_radio_field" value="value1" <?php checked( 'value1', $myplugin_radio_field ); ?>/> Title only
+	        <input type="radio" name="myplugin_settings_title_visibility_field" value="value1" <?php checked( 'value1', $myplugin_title_visibility_field ); ?>/> Title only
 	    </label>
 	    <label for="value2">
-	        <input type="radio" name="myplugin_settings_radio_field" value="value2" <?php checked( 'value2', $myplugin_radio_field ); ?>/> Title and contents
+	        <input type="radio" name="myplugin_settings_title_visibility_field" value="value2" <?php checked( 'value2', $myplugin_title_visibility_field ); ?>/> Title and contents
 	    </label>
 	    <?php
 	}
-		function myplugin_settings_checkbox_field_callback() {
-      $myplugin_checkbox_field = get_option('myplugin_settings_checkbox_field');
+		function myplugin_settings_email_visibilty_field_callback() {
+      $myplugin_email_visibilty_field = get_option('myplugin_settings_email_visibilty_field');
       ?>
-      <input type="checkbox" name="myplugin_settings_checkbox_field" value="1" <?php checked(1, $myplugin_checkbox_field, true); ?> />Show email
+      <input type="checkbox" name="myplugin_settings_email_visibilty_field" value="1" <?php checked(1, $myplugin_email_visibilty_field, true); ?> />Show email
       <?php
     }
      function myplugin_settings_date_field_callback() {
@@ -369,28 +369,32 @@
       $content = "";
       //write_log('df');
       // Retrieves a post meta field for the given post ID.
+
       $title = get_post_meta($post->ID, "_meta-box-title", true);
       // Retrieves a post meta field for the given post ID.
       $date = get_post_meta($post->ID, '_meta-box-date', true);
       $email = get_post_meta($post->ID, '_meta-box-email', true);
-      $myplugin_checkbox_field = get_option('myplugin_settings_checkbox_field');
-      $myplugin_radio_field = get_option( 'myplugin_settings_radio_field' );
+      $myplugin_organization_name_field = get_option('myplugin_settings_organization_name_field');
+      $myplugin_description_field = get_option('myplugin_settings_description_field');
+      $myplugin_vacancy_field = get_option('myplugin_settings_vacancy_field');
+      $myplugin_email_visibilty_field = get_option('myplugin_settings_email_visibilty_field');
+      $myplugin_title_visibility_field = get_option( 'myplugin_settings_title_visibility_field' );
       $myplugin_date_field = get_option('myplugin_settings_date_field');
       // echo $myplugin_date_field;
-      if($myplugin_checkbox_field == 1){
-      	if ($myplugin_radio_field == 'value1') {
-      		$content = "<div> <h2 class='Add_Jobs'> JOB ADDED </h2> <p> Job Type : $title </p> </div>";
+      if($myplugin_email_visibilty_field == 1){
+      	if ($myplugin_title_visibility_field == 'value1') {
+      		$content = "<div> <p> Job Type : $title </p> </div>";
       	} else{
       		($date >= $myplugin_date_field) ? ($date = "Expired") : "" ;
-      		 $content = "<div><h2 class='Add_Jobs'>JOB ADDED</h2> <p>Job Type : $title</p><p> Email : $email </p><p> Date : $date </p> </div>";
+      		 $content = "<div><p>Job Type : $title</p> <p>Orgaization name : $myplugin_organization_name_field</p> <p>Description : $myplugin_description_field</p> <p>Number of vacancy : $myplugin_vacancy_field</p> <p> Email : $email </p><p> Last date : $date </p> </div>";
       	}
 
       } else{
-      		if ($myplugin_radio_field == 'value1') {
-      			$content = "<div> <h2 class='Add_Jobs'> JOB ADDED </h2> <p> Job Type : $title </p> </div>";
+      		if ($myplugin_title_visibility_field == 'value1') {
+      			$content = "<div> <p> Job Type : $title </p> </div>";
       		}else{
       		($date >= $myplugin_date_field) ? ($date = "Expired") : "" ;
-      		 	$content = "<div><h2 class='Add_Jobs'>JOB ADDED</h2> <p>Job Type : $title</p><p> Date : $date </p> </div>";
+      		 	$content = "<div> <p>Job Type : $title</p><p>Orgaization name : $myplugin_organization_name_field</p> <p>Description : $myplugin_description_field</p> <p>Number of vacancy : $myplugin_vacancy_field</p><p> Last date : $date </p> </div>";
       	}
       }
       
