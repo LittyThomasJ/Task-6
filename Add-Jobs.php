@@ -3,7 +3,7 @@
   Plugin Name: Add Jobs
   Plugin URI: https://jobs.com/
   Description: Declares a plugin that will create a custom post type displaying jobs.
-  Version: 1.0
+  Version: 1.1
   Author: Litty thomas
   Author URI: http://litty4ever.com/
   License: GPLv2
@@ -119,22 +119,7 @@
       // Updates a post meta field based on the given post ID.
       update_post_meta($post_id, "_meta-box-date", $meta_box_date_value);
     }
-    public function display_front_end($val){
-      global $post;
-      $test=$title=$email=$date="";
-      //write_log('df');
-      // Retrieves a post meta field for the given post ID.
-      $title = get_post_meta($post->ID, "_meta-box-title", true);
-      // Retrieves a post meta field for the given post ID.
-      $email = get_post_meta($post->ID, '_meta-box-email', true);
-      // Retrieves a post meta field for the given post ID.
-      $date = get_post_meta($post->ID, '_meta-box-date', true);
-      // Content which is displayed
-      $test = "<div><h2 class='Add_Jobs'>JOB ADDED</h2> <p>Job Type : $title</p><p> Email : $email </p><p> Date : $date </p> </div>";
-      // value returned for displaying
-      return $val . $test;
-
-    }
+    
   }
 
   class JobsSettings extends JobsMetabox{
@@ -178,45 +163,6 @@
               submit_button( 'Save Settings' );
           ?>
         </form>
-        <!-- <table class="form-table">
-          <tbody>
-            <tr>
-              <th scope="row"><label for="name">Organization name</label></th>
-              <td> <input type="text" name="name" value=""> </td>
-            </tr>
-            <tr>
-              <th scope="row"><label for="content">Description</label></th>
-              <td> <textarea name="content" rows="8" cols="80"></textarea> </td>
-            </tr>
-            <tr>
-              <th scope="row"><label for="no-of-jobs">Number of vacancies</label></th>
-              <td> <input type="number" name="name" value=""> </td>
-            </tr>
-            <tr>
-              <th scope="row"> <label for="title">Show title</label> </th>
-              <td> <input type="radio" name="title" > <label for="title-only">Show title</label> <input type="radio" name="title" > <label for="title-content">Show title and content</label> </td>
-            </tr>
-            <tr>
-              <th scope="row"><label for="show-email">Show email</label></th>
-              <td> <input name="show-email" type="checkbox" value="true"> </td>
-            </tr>
-            <tr>
-              <th scope="row"><label for="expiry-date">Expiry date</label></th>
-              <td> <input type="date" name="expiry-date" value=""> </td>
-            </tr>
-            <tr>
-              <th scope="row"><label for="name">Set color</label></th>
-              <td> <input type="color" name="color" value=""> </td>
-            </tr>
-            <tr>
-              <th scope="row"> <input type="submit" name="submit" value="Submit"> </th>
-
-            </tr>
-          </tbody>
-
-        </table> -->
-
-
       </div>
       <?php
     }
@@ -225,7 +171,7 @@
       // Setup settings section
       add_settings_section(
           'myplugin_settings_section',
-          'Myplugin Settings Page',
+          '',
           '',
           'myplugin-settings-page'
       );
@@ -244,8 +190,122 @@
       // Add text fields
       add_settings_field(
           'myplugin_settings_input_field',
-          __( 'Input Field', 'my-plugin' ),
+          __( 'Organization name', 'my-plugin' ),
           array($this,'myplugin_settings_input_field_callback'),
+          'myplugin-settings-page',
+          'myplugin_settings_section'
+      );
+      // Registe textarea field
+	    register_setting(
+	        'myplugin-settings-page',
+	        'myplugin_settings_textarea_field',
+	        array(
+	            'type' => 'string',
+	            'sanitize_callback' => 'sanitize_textarea_field',
+	            'default' => ''
+	        )
+	    );
+
+	     // Add textarea fields
+	     add_settings_field(
+	        'myplugin_settings_textarea_field',
+	        __( 'Description', 'my-plugin' ),
+	        array($this,'myplugin_settings_textarea_field_callback'),
+	        'myplugin-settings-page',
+	        'myplugin_settings_section'
+	    );
+	     // Register vacancy field
+      register_setting(
+          'myplugin-settings-page',
+          'myplugin_settings_vacancy_field',
+          array(
+              'type' => 'int',
+              'sanitize_callback' => 'sanitize_text_field',
+              'default' => ''
+          )
+      );
+
+      // Add vacancy fields
+      add_settings_field(
+          'myplugin_settings_vacancy_field',
+          __( 'Number of Vacancies', 'my-plugin' ),
+          array($this,'myplugin_settings_vacancy_field_callback'),
+          'myplugin-settings-page',
+          'myplugin_settings_section'
+      );
+      // Register radio field
+    register_setting(
+        'myplugin-settings-page',
+        'myplugin_settings_radio_field',
+        array(
+            'type' => 'string',
+            'sanitize_callback' => 'sanitize_text_field',
+            'default' => ''
+        )
+    );
+
+    // Add radio fields
+    add_settings_field(
+        'myplugin_settings_radio_field',
+        __( 'Display options', 'my-plugin' ),
+        array($this,'myplugin_settings_radio_field_callback'),
+        'myplugin-settings-page',
+        'myplugin_settings_section'
+    );
+
+        register_setting(
+        'myplugin-settings-page',
+        'myplugin_settings_checkbox_field',
+        array(
+            'type' => 'string',
+            'sanitize_callback' => 'sanitize_text_field',
+            'default' => ''
+        )
+    );
+
+    // Add radio fields
+    add_settings_field(
+        'myplugin_settings_checkbox_field',
+        __( 'Display options', 'my-plugin' ),
+        array($this,'myplugin_settings_checkbox_field_callback'),
+        'myplugin-settings-page',
+        'myplugin_settings_section'
+    );
+     // Registe date field
+      register_setting(
+          'myplugin-settings-page',
+          'myplugin_settings_date_field',
+          array(
+              'type' => 'string',
+              'sanitize_callback' => 'sanitize_text_field',
+              'default' => ''
+          )
+      );
+
+      // Add text fields
+      add_settings_field(
+          'myplugin_settings_date_field',
+          __( 'Expiry date ', 'my-plugin' ),
+          array($this,'myplugin_settings_date_field_callback'),
+          'myplugin-settings-page',
+          'myplugin_settings_section'
+      );
+      // Registe input field
+      register_setting(
+          'myplugin-settings-page',
+          'myplugin_settings_color_field',
+          array(
+              'type' => 'string',
+              'sanitize_callback' => 'sanitize_text_field',
+              'default' => ''
+          )
+      );
+
+      // Add text fields
+      add_settings_field(
+          'myplugin_settings_color_field',
+          __( 'Choose a color', 'my-plugin' ),
+          array($this,'myplugin_settings_color_field_callback'),
           'myplugin-settings-page',
           'myplugin_settings_section'
       );
@@ -255,6 +315,87 @@
       ?>
       <input type="text" name="myplugin_settings_input_field" class="regular-text" value="<?php echo isset($myplugin_input_field) ? esc_attr( $myplugin_input_field ) : ''; ?>" />
       <?php
+    }
+    /**
+	 * textarea template
+	 */
+	function myplugin_settings_textarea_field_callback() {
+	    $myplugin_textarea_field = get_option('myplugin_settings_textarea_field');
+	    ?>
+	    <textarea name="myplugin_settings_textarea_field" class="widefat" rows="10"><?php echo isset($myplugin_textarea_field) ? esc_textarea( $myplugin_textarea_field ) : ''; ?></textarea>
+	    <?php 
+	}
+	function myplugin_settings_vacancy_field_callback() {
+      $myplugin_vacancy_field = get_option('myplugin_settings_vacancy_field');
+      ?>
+      <input type="number" name="myplugin_settings_vacancy_field" class="regular-text" value="<?php echo isset($myplugin_vacancy_field) ? esc_attr( $myplugin_vacancy_field ) : ''; ?>" min=1 max=100/>
+      <?php
+    }
+    /**
+	 * radio field tempalte
+	 */
+	function myplugin_settings_radio_field_callback() {
+	    $myplugin_radio_field = get_option( 'myplugin_settings_radio_field' );
+	    ?>
+	    <label for="value1">
+	        <input type="radio" name="myplugin_settings_radio_field" value="value1" <?php checked( 'value1', $myplugin_radio_field ); ?>/> Title only
+	    </label>
+	    <label for="value2">
+	        <input type="radio" name="myplugin_settings_radio_field" value="value2" <?php checked( 'value2', $myplugin_radio_field ); ?>/> Title and contents
+	    </label>
+	    <?php
+	}
+		function myplugin_settings_checkbox_field_callback() {
+      $myplugin_checkbox_field = get_option('myplugin_settings_checkbox_field');
+      ?>
+      <input type="checkbox" name="myplugin_settings_checkbox_field" value="1" <?php checked(1, $myplugin_checkbox_field, true); ?> />Show email
+      <?php
+    }
+     function myplugin_settings_date_field_callback() {
+      $myplugin_date_field = get_option('myplugin_settings_date_field');
+      ?>
+      <input type="date" name="myplugin_settings_date_field" class="regular-text" value="<?php echo isset($myplugin_date_field) ? esc_attr( $myplugin_date_field ) : ''; ?>" />
+      <?php
+    }
+    function myplugin_settings_color_field_callback() {
+      $myplugin_color_field = get_option('myplugin_settings_color_field');
+      ?>
+      <input type="color" name="myplugin_settings_color_field" class="regular-text" value="<?php echo isset($myplugin_color_field) ? esc_attr( $myplugin_color_field ) : ''; ?>" />
+      <?php
+    }
+    public function display_front_end($val){
+      global $post;
+      $test=$title=$email=$date="";
+      $content = "";
+      //write_log('df');
+      // Retrieves a post meta field for the given post ID.
+      $title = get_post_meta($post->ID, "_meta-box-title", true);
+      // Retrieves a post meta field for the given post ID.
+      $date = get_post_meta($post->ID, '_meta-box-date', true);
+      $email = get_post_meta($post->ID, '_meta-box-email', true);
+      $myplugin_checkbox_field = get_option('myplugin_settings_checkbox_field');
+      $myplugin_radio_field = get_option( 'myplugin_settings_radio_field' );
+      $myplugin_date_field = get_option('myplugin_settings_date_field');
+      // echo $myplugin_date_field;
+      if($myplugin_checkbox_field == 1){
+      	if ($myplugin_radio_field == 'value1') {
+      		$content = "<div> <h2 class='Add_Jobs'> JOB ADDED </h2> <p> Job Type : $title </p> </div>";
+      	} else{
+      		($date >= $myplugin_date_field) ? ($date = "Expired") : "" ;
+      		 $content = "<div><h2 class='Add_Jobs'>JOB ADDED</h2> <p>Job Type : $title</p><p> Email : $email </p><p> Date : $date </p> </div>";
+      	}
+
+      } else{
+      		if ($myplugin_radio_field == 'value1') {
+      			$content = "<div> <h2 class='Add_Jobs'> JOB ADDED </h2> <p> Job Type : $title </p> </div>";
+      		}else{
+      		($date >= $myplugin_date_field) ? ($date = "Expired") : "" ;
+      		 	$content = "<div><h2 class='Add_Jobs'>JOB ADDED</h2> <p>Job Type : $title</p><p> Date : $date </p> </div>";
+      	}
+      }
+      
+      return $val . $content;
+
     }
   }
   new JobsSettings();
