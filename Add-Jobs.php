@@ -373,24 +373,27 @@
       //write_log('df');
       // Retrieves a post meta field for the given post ID.
 
-      $title = '<p>Job Type : ' . get_post_meta($post->ID, "_meta-box-title", true) . '</p>';
+      (empty(get_post_meta($post->ID, "_meta-box-title", true))) ? '' : ($title = '<p>Job Type : ' . get_post_meta($post->ID, "_meta-box-title", true) . '</p>') ;
       $date =  get_post_meta($post->ID, '_meta-box-date', true);
-      $email = '<p>Email : ' . get_post_meta($post->ID, '_meta-box-email', true) . '</p>';
-      $myplugin_organization_name_field = '<p>Organization name : ' . get_option('myplugin_settings_organization_name_field') . '</p>';
-      $myplugin_description_field = '<p>Description : ' . get_option('myplugin_settings_description_field') . '</p>';
-      $myplugin_vacancy_field = '<p>Number of vacancy : ' . get_option('myplugin_settings_vacancy_field') . '</p>';
+      (empty(get_post_meta($post->ID, '_meta-box-email', true))) ? '' : $email = '<p>Email : ' . get_post_meta($post->ID, '_meta-box-email', true) . '</p>';
+      (empty(get_option('myplugin_settings_organization_name_field'))) ? '' : $myplugin_organization_name_field = '<p>Organization name : ' . get_option('myplugin_settings_organization_name_field') . '</p>';
+      (empty(get_option('myplugin_settings_description_field'))) ? '' : $myplugin_description_field = '<p>Description : ' . get_option('myplugin_settings_description_field') . '</p>';
+      (empty(get_option('myplugin_settings_vacancy_field')))? '' : $myplugin_vacancy_field = '<p>Number of vacancy : ' . get_option('myplugin_settings_vacancy_field') . '</p>';
       $myplugin_email_visibilty_field = get_option('myplugin_settings_email_visibilty_field');
       $myplugin_title_visibility_field = get_option( 'myplugin_settings_title_visibility_field' );
       $myplugin_date_field = get_option('myplugin_settings_date_field');
       ($myplugin_email_visibilty_field == 1) ? $email = $email : $email ='';
-      if ($date >= $myplugin_date_field) {
-      	# code...
-      	$content .= "<p> Job Expired </p>";
+      if(!empty($date)|| !empty($myplugin_date_field)){
+        if ($date >= $myplugin_date_field) {
+        	# code...
+        	$content .= "<p> Job Expired </p>";
 
 
-      } else{
-      	// $content .= "Job not Expired";
-      	($myplugin_title_visibility_field == 'value1') ? ($content .= "$title") : ($content .= "$title $myplugin_organization_name_field  $myplugin_description_field $myplugin_vacancy_field <p>Last date : $date </p> $email ");
+        } else{
+        	// $content .= "Job not Expired";
+          (empty(get_post_meta($post->ID, '_meta-box-date', true))) ? '' : $date= '<p>Last date : $date </p>';
+        	($myplugin_title_visibility_field == 'value1') ? ($content .= "$title") : ($content .= "$title $myplugin_organization_name_field  $myplugin_description_field $myplugin_vacancy_field $date $email ");
+        }
       }
 
       $content .= "</div>";
