@@ -119,7 +119,7 @@
       // Updates a post meta field based on the given post ID.
       update_post_meta($post_id, "_meta-box-date", $meta_box_date_value);
     }
-    
+
   }
 
   class JobsSettings extends JobsMetabox{
@@ -132,6 +132,9 @@
       // add_action('wp_enqueue_scripts', array($this,'Style_contents'));
       add_action('admin_menu', array($this,'add_jobs_submenu_example'));
       add_action( 'admin_init', array($this,'myplugin_settings_init' ));
+      // add_action( 'wp_enqueue_scripts', array($this,'enqueue_frontend_assets'), 10 );
+      add_action('init', array($this,'register_script'));
+      add_action('wp_enqueue_scripts', array($this,'enqueue_style'));
     }
     function add_jobs_submenu_example(){
 
@@ -322,8 +325,8 @@
 	function myplugin_settings_description_field_callback() {
 	    $myplugin_description_field = get_option('myplugin_settings_description_field');
 	    ?>
-	    <textarea name="myplugin_settings_description_field" class="widefat" rows="10"><?php echo isset($myplugin_description_field) ? esc_textarea( $myplugin_description_field ) : ''; ?></textarea>
-	    <?php 
+	    <textarea name="myplugin_settings_description_field" class="regular-text" rows="5"><?php echo isset($myplugin_description_field) ? esc_textarea( $myplugin_description_field ) : ''; ?></textarea>
+	    <?php
 	}
 	function myplugin_settings_vacancy_field_callback() {
       $myplugin_vacancy_field = get_option('myplugin_settings_vacancy_field');
@@ -365,41 +368,47 @@
     }
     public function display_front_end($val){
       global $post;
-      $test=$title=$email=$date="";
-      $content = "";
+      $test=$title=$email=$date=$myplugin_organization_name_field=$myplugin_description_field=$myplugin_vacancy_field = $myplugin_email_visibilty_field = $myplugin_title_visibility_field =$myplugin_date_field ="";
+      $content = "<div>";
       //write_log('df');
       // Retrieves a post meta field for the given post ID.
 
-      $title = get_post_meta($post->ID, "_meta-box-title", true);
-      // Retrieves a post meta field for the given post ID.
-      $date = get_post_meta($post->ID, '_meta-box-date', true);
-      $email = get_post_meta($post->ID, '_meta-box-email', true);
-      $myplugin_organization_name_field = get_option('myplugin_settings_organization_name_field');
-      $myplugin_description_field = get_option('myplugin_settings_description_field');
-      $myplugin_vacancy_field = get_option('myplugin_settings_vacancy_field');
+      $title = '<p>Job Type : ' . get_post_meta($post->ID, "_meta-box-title", true) . '</p>';
+      $date =  get_post_meta($post->ID, '_meta-box-date', true);
+      $email = '<p>Email : ' . get_post_meta($post->ID, '_meta-box-email', true) . '</p>';
+      $myplugin_organization_name_field = '<p>Organization name : ' . get_option('myplugin_settings_organization_name_field') . '</p>';
+      $myplugin_description_field = '<p>Description : ' . get_option('myplugin_settings_description_field') . '</p>';
+      $myplugin_vacancy_field = '<p>Number of vacancy : ' . get_option('myplugin_settings_vacancy_field') . '</p>';
       $myplugin_email_visibilty_field = get_option('myplugin_settings_email_visibilty_field');
       $myplugin_title_visibility_field = get_option( 'myplugin_settings_title_visibility_field' );
       $myplugin_date_field = get_option('myplugin_settings_date_field');
-      // echo $myplugin_date_field;
-      if($myplugin_email_visibilty_field == 1){
-      	if ($myplugin_title_visibility_field == 'value1') {
-      		$content = "<div> <p> Job Type : $title </p> </div>";
-      	} else{
-      		($date >= $myplugin_date_field) ? ($date = "Expired") : "" ;
-      		 $content = "<div><p>Job Type : $title</p> <p>Orgaization name : $myplugin_organization_name_field</p> <p>Description : $myplugin_description_field</p> <p>Number of vacancy : $myplugin_vacancy_field</p> <p> Email : $email </p><p> Last date : $date </p> </div>";
-      	}
+      ($myplugin_email_visibilty_field == 1) ? $email = $email : $email ='';
+      if ($date >= $myplugin_date_field) {
+      	# code...
+      	$content .= "<p> Job Expired </p>";
+
 
       } else{
-      		if ($myplugin_title_visibility_field == 'value1') {
-      			$content = "<div> <p> Job Type : $title </p> </div>";
-      		}else{
-      		($date >= $myplugin_date_field) ? ($date = "Expired") : "" ;
-      		 	$content = "<div> <p>Job Type : $title</p><p>Orgaization name : $myplugin_organization_name_field</p> <p>Description : $myplugin_description_field</p> <p>Number of vacancy : $myplugin_vacancy_field</p><p> Last date : $date </p> </div>";
-      	}
+      	// $content .= "Job not Expired";
+      	($myplugin_title_visibility_field == 'value1') ? ($content .= "$title") : ($content .= "$title $myplugin_organization_name_field  $myplugin_description_field $myplugin_vacancy_field <p>Last date : $date </p> $email ");
       }
-      
+
+      $content .= "</div>";
       return $val . $content;
 
+    }
+    public function register_script(){
+    	//wp_register_script( 'custom_jquery', plugins_url('/js/custom-jquery.js', __FILE__), array('jquery'), '2.5.1' );
+
+    	wp_register_style( 'new_style', plugins_url('/css/style.css', __FILE__), false, '1.0.0', 'all');
+    }
+
+    // use the registered jquery and style above
+
+    public function enqueue_style(){
+    	//wp_enqueue_script('custom_jquery');
+
+    	wp_enqueue_style( 'new_style' );
     }
   }
   new JobsSettings();
