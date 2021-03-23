@@ -18,7 +18,7 @@
   //require_once MYPLUGIN_PATH . 'Settings/settings.php';
   // class for creating cutsom post type
   class JobsCustomType{
-  	// Function for creating custom post type for jobs 
+  	// Function for creating custom post type for jobs
     public function create_jobs() {
     	register_post_type( 'jobs',
     		array(
@@ -61,7 +61,7 @@
     }
     // Function for displaying metabox
     public function display_job_meta_box( $object ) {
-    	// Validating contents using nonce field 
+    	// Validating contents using nonce field
       wp_nonce_field(basename(__FILE__), "meta-box-nonce");
       ?>
       <!-- The contents within Custom metabox -->
@@ -120,7 +120,7 @@
     }
 
   }
-  // Class for creating Settings page inherits 
+  // Class for creating Settings page inherits
   class JobsSettings extends JobsMetabox{
   	// Initialized usng constructor
     public function __construct(){
@@ -134,7 +134,7 @@
       add_action( 'admin_init', array($this,'myplugin_settings_init' ));
     }
     // Function for adding submenu 'Settings'
-    function add_jobs_submenu_example(){
+    public function add_jobs_submenu_example(){
 
      add_submenu_page(
                      'edit.php?post_type=jobs', //$parent_slug
@@ -147,7 +147,7 @@
     }
 
 	//add_submenu_page callback function
-    function jobs_submenu_render_page($result) {
+    public function jobs_submenu_render_page($result) {
       ?>
       <div class="container">
         <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
@@ -167,7 +167,7 @@
       <?php
     }
     // Function for creating settings page contents
-    function myplugin_settings_init() {
+    public function myplugin_settings_init() {
 
       // Setup settings section
       add_settings_section(
@@ -235,7 +235,7 @@
           'myplugin_settings_section'
       );
       // Register title visibility field
-    register_setting(
+      register_setting(
         'myplugin-settings-page',
         'myplugin_settings_title_visibility_field',
         array(
@@ -243,18 +243,18 @@
             'sanitize_callback' => 'sanitize_text_field',
             'default' => ''
         )
-    );
+      );
 
-    // Add title visibility fields
-    add_settings_field(
-        'myplugin_settings_title_visibility_field',
-        __( 'Display options', 'my-plugin' ),
-        array($this,'myplugin_settings_title_visibility_field_callback'),
-        'myplugin-settings-page',
-        'myplugin_settings_section'
-    );
-	//  Register email visibility field
-        register_setting(
+      // Add title visibility fields
+      add_settings_field(
+          'myplugin_settings_title_visibility_field',
+          __( 'Display options', 'my-plugin' ),
+          array($this,'myplugin_settings_title_visibility_field_callback'),
+          'myplugin-settings-page',
+          'myplugin_settings_section'
+      );
+	     //  Register email visibility field
+      register_setting(
         'myplugin-settings-page',
         'myplugin_settings_email_visibilty_field',
         array(
@@ -262,16 +262,16 @@
             'sanitize_callback' => 'sanitize_text_field',
             'default' => ''
         )
-    );
+      );
 
-    // Add email visibility fields
-    add_settings_field(
-        'myplugin_settings_email_visibilty_field',
-        __( 'Display options', 'my-plugin' ),
-        array($this,'myplugin_settings_email_visibilty_field_callback'),
-        'myplugin-settings-page',
-        'myplugin_settings_section'
-    );
+      // Add email visibility fields
+      add_settings_field(
+          'myplugin_settings_email_visibilty_field',
+          __( 'Display options', 'my-plugin' ),
+          array($this,'myplugin_settings_email_visibilty_field_callback'),
+          'myplugin-settings-page',
+          'myplugin_settings_section'
+      );
      // Register expiry date field
       register_setting(
           'myplugin-settings-page',
@@ -320,41 +320,41 @@
       <?php
     }
     // callback function for description field
-	function myplugin_settings_description_field_callback() {
+	  function myplugin_settings_description_field_callback() {
 		// Retrieving values from input field using get_option()
 	    $myplugin_description_field = get_option('myplugin_settings_description_field');
 	    ?>
 	    <textarea name="myplugin_settings_description_field" class="regular-text" rows="5"><?php echo isset($myplugin_description_field) ? esc_textarea( $myplugin_description_field ) : ''; ?></textarea>
 	    <?php
-	}
-	//// callback function for vacancy field
-	function myplugin_settings_vacancy_field_callback() {
-		// Retrieving values from input field using get_option()
-      $myplugin_vacancy_field = get_option('myplugin_settings_vacancy_field');
-      ?>
-      <input type="number" name="myplugin_settings_vacancy_field" class="regular-text" value="<?php echo isset($myplugin_vacancy_field) ? esc_attr( $myplugin_vacancy_field ) : ''; ?>" min=1 max=100/>
-      <?php
+	  }
+  	// callback function for vacancy field
+  	function myplugin_settings_vacancy_field_callback() {
+  		// Retrieving values from input field using get_option()
+        $myplugin_vacancy_field = get_option('myplugin_settings_vacancy_field');
+        ?>
+        <input type="number" name="myplugin_settings_vacancy_field" class="regular-text" value="<?php echo isset($myplugin_vacancy_field) ? esc_attr( $myplugin_vacancy_field ) : ''; ?>" min=1 max=100/>
+        <?php
+      }
+      // callback function for title visibility
+  	function myplugin_settings_title_visibility_field_callback() {
+  		// Retrieving values from input field using get_option()
+  	    $myplugin_title_visibility_field = get_option( 'myplugin_settings_title_visibility_field' );
+  	    ?>
+  	    <label for="value1">
+  	        <input type="radio" name="myplugin_settings_title_visibility_field" value="value1" <?php checked( 'value1', $myplugin_title_visibility_field ); ?>/> Title only
+  	    </label>
+  	    <label for="value2">
+  	        <input type="radio" name="myplugin_settings_title_visibility_field" value="value2" <?php checked( 'value2', $myplugin_title_visibility_field ); ?>/> Title and contents
+  	    </label>
+  	    <?php
     }
-    // callback function for title visibility
-	function myplugin_settings_title_visibility_field_callback() {
-		// Retrieving values from input field using get_option()
-	    $myplugin_title_visibility_field = get_option( 'myplugin_settings_title_visibility_field' );
-	    ?>
-	    <label for="value1">
-	        <input type="radio" name="myplugin_settings_title_visibility_field" value="value1" <?php checked( 'value1', $myplugin_title_visibility_field ); ?>/> Title only
-	    </label>
-	    <label for="value2">
-	        <input type="radio" name="myplugin_settings_title_visibility_field" value="value2" <?php checked( 'value2', $myplugin_title_visibility_field ); ?>/> Title and contents
-	    </label>
-	    <?php
-	}
-	// // callback function for email visibility
-	function myplugin_settings_email_visibilty_field_callback() {
-		// Retrieving values from input field using get_option()
-      $myplugin_email_visibilty_field = get_option('myplugin_settings_email_visibilty_field');
-      ?>
-      <input type="checkbox" name="myplugin_settings_email_visibilty_field" value="1" <?php checked(1, $myplugin_email_visibilty_field, true); ?> />Show email
-      <?php
+  	// callback function for email visibility
+  	function myplugin_settings_email_visibilty_field_callback() {
+  		// Retrieving values from input field using get_option()
+        $myplugin_email_visibilty_field = get_option('myplugin_settings_email_visibilty_field');
+        ?>
+        <input type="checkbox" name="myplugin_settings_email_visibilty_field" value="1" <?php checked(1, $myplugin_email_visibilty_field, true); ?> />Show email
+        <?php
     }
     // callback function for date field
     function myplugin_settings_date_field_callback() {
@@ -395,7 +395,7 @@
         	// If date field in metabox is greater than date field in settings is page, job expired
         	$content .= "<p> Job Expired </p>";
         } else{
-        	// retrieving data with terniary operation 
+        	// retrieving data with terniary operation
           (empty(get_post_meta($post->ID, '_meta-box-date', true))) ? '' : $date = '<p>Last date :'. $date .'</p>';
           // Terniary operation to find whether the visbility field checked for title oly or not
         	($myplugin_title_visibility_field == 'value1') ? ($content .= "$title") : ($content .= "$title $myplugin_organization_name_field  $myplugin_description_field $myplugin_vacancy_field $date $email ");
