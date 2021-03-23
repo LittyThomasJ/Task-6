@@ -8,19 +8,17 @@
   Author URI: http://litty4ever.com/
   License: GPLv2
   */
-  if( !defined('ABSPATH') ) : exit(); endif;
+  	if( !defined('ABSPATH') ) : exit(); endif;
 
-  /**
-   * Define plugin constants
-   */
+	  /**
+	   * Define plugin constants
+	   */
   define( 'MYPLUGIN_PATH', trailingslashit( plugin_dir_path(__FILE__) ) );
   define( 'MYPLUGIN_URL', trailingslashit( plugins_url('/', __FILE__) ) );
-  require_once MYPLUGIN_PATH . 'Settings/settings.php';
+  //require_once MYPLUGIN_PATH . 'Settings/settings.php';
+  // class for creating cutsom post type
   class JobsCustomType{
-    // public function __construct(){
-    //   add_action( 'init', array($this,'create_movie_review') );
-    // }
-
+  	// Function for creating custom post type for jobs 
     public function create_jobs() {
     	register_post_type( 'jobs',
     		array(
@@ -42,7 +40,7 @@
 
     			'public' => true,
     			'menu_position' => 15,
-          'supports' => array( 'title', 'editor', 'comments', 'thumbnail', 'custom-fields' ),
+          		'supports' => array( 'title', 'editor', 'comments', 'thumbnail', 'custom-fields' ),
 			    'taxonomies' => array( '' ),
     			'menu_icon' => 'dashicons-groups',
     			'has_archive' => true
@@ -50,18 +48,20 @@
     	);
     }
   }
+  // Class for creating the metabox inside the custom post type
   class JobsMetabox extends JobsCustomType{
-
+	// function for creating metabox
     public function my_admin() {
+    	// Adding metabox
     	add_meta_box( 'job_meta_box',
     		'Job Details',
     		array($this, 'display_job_meta_box'),
     		'jobs', 'normal', 'high'
     	);
     }
-
+    // Function for displaying metabox
     public function display_job_meta_box( $object ) {
-    	// Retrieve current jobs
+    	// Validating contents using nonce field 
       wp_nonce_field(basename(__FILE__), "meta-box-nonce");
       ?>
       <!-- The contents within Custom metabox -->
@@ -83,9 +83,8 @@
       </div>
       <?php
     }
-    // for saving contents of metabox
+    // Function for saving contents of metabox
     function save_custom_meta_box($post_id){
-      //write_log('stringfff');
       // For verifying using wp_verify_nonce, Verifies that a correct security nonce was used with time limit.
       if (!isset($_POST["meta-box-nonce"]) || !wp_verify_nonce($_POST["meta-box-nonce"], basename(__FILE__)))
         return $post_id;
@@ -121,8 +120,9 @@
     }
 
   }
-
+  // Class for creating Settings page inherits 
   class JobsSettings extends JobsMetabox{
+  	// Initialized usng constructor
     public function __construct(){
       add_action( 'init', array($this,'create_jobs') );
       add_action( 'admin_init', array($this,'my_admin' ));
@@ -132,10 +132,8 @@
       // add_action('wp_enqueue_scripts', array($this,'Style_contents'));
       add_action('admin_menu', array($this,'add_jobs_submenu_example'));
       add_action( 'admin_init', array($this,'myplugin_settings_init' ));
-      // add_action( 'wp_enqueue_scripts', array($this,'enqueue_frontend_assets'), 10 );
-      add_action('init', array($this,'register_script'));
-      add_action('wp_enqueue_scripts', array($this,'enqueue_style'));
     }
+    // Function for adding submenu 'Settings'
     function add_jobs_submenu_example(){
 
      add_submenu_page(
@@ -148,8 +146,7 @@
      );
     }
 
-//add_submenu_page callback function
-
+	//add_submenu_page callback function
     function jobs_submenu_render_page($result) {
       ?>
       <div class="container">
@@ -169,6 +166,7 @@
       </div>
       <?php
     }
+    // Function for creating settings page contents
     function myplugin_settings_init() {
 
       // Setup settings section
@@ -179,7 +177,7 @@
           'myplugin-settings-page'
       );
 
-      // Registe input field
+      // Register field for organization name
       register_setting(
           'myplugin-settings-page',
           'myplugin_settings_organization_name_field',
@@ -190,7 +188,7 @@
           )
       );
 
-      // Add text fields
+      // Add field for organization name
       add_settings_field(
           'myplugin_settings_organization_name_field',
           __( 'Organization name', 'my-plugin' ),
@@ -198,7 +196,7 @@
           'myplugin-settings-page',
           'myplugin_settings_section'
       );
-      // Registe textarea field
+      // Registe field for description
 	    register_setting(
 	        'myplugin-settings-page',
 	        'myplugin_settings_description_field',
@@ -209,7 +207,7 @@
 	        )
 	    );
 
-	     // Add textarea fields
+	     // Add field for description
 	     add_settings_field(
 	        'myplugin_settings_description_field',
 	        __( 'Description', 'my-plugin' ),
@@ -236,7 +234,7 @@
           'myplugin-settings-page',
           'myplugin_settings_section'
       );
-      // Register radio field
+      // Register title visibility field
     register_setting(
         'myplugin-settings-page',
         'myplugin_settings_title_visibility_field',
@@ -247,7 +245,7 @@
         )
     );
 
-    // Add radio fields
+    // Add title visibility fields
     add_settings_field(
         'myplugin_settings_title_visibility_field',
         __( 'Display options', 'my-plugin' ),
@@ -255,7 +253,7 @@
         'myplugin-settings-page',
         'myplugin_settings_section'
     );
-
+	//  Register email visibility field
         register_setting(
         'myplugin-settings-page',
         'myplugin_settings_email_visibilty_field',
@@ -266,7 +264,7 @@
         )
     );
 
-    // Add radio fields
+    // Add email visibility fields
     add_settings_field(
         'myplugin_settings_email_visibilty_field',
         __( 'Display options', 'my-plugin' ),
@@ -274,7 +272,7 @@
         'myplugin-settings-page',
         'myplugin_settings_section'
     );
-     // Registe date field
+     // Register expiry date field
       register_setting(
           'myplugin-settings-page',
           'myplugin_settings_date_field',
@@ -285,7 +283,7 @@
           )
       );
 
-      // Add text fields
+      // Add expiry date fields
       add_settings_field(
           'myplugin_settings_date_field',
           __( 'Expiry date ', 'my-plugin' ),
@@ -293,7 +291,7 @@
           'myplugin-settings-page',
           'myplugin_settings_section'
       );
-      // Registe input field
+      // Register color field
       register_setting(
           'myplugin-settings-page',
           'myplugin_settings_color_field',
@@ -304,7 +302,7 @@
           )
       );
 
-      // Add text fields
+      // Add color fields
       add_settings_field(
           'myplugin_settings_color_field',
           __( 'Choose a color', 'my-plugin' ),
@@ -313,31 +311,33 @@
           'myplugin_settings_section'
       );
     }
+    // callback function for organization name
     function myplugin_settings_organization_name_field_callback() {
+    	// Retrieving values from input field using get_option()
       $myplugin_organization_name_field = get_option('myplugin_settings_organization_name_field');
       ?>
       <input type="text" name="myplugin_settings_organization_name_field" class="regular-text" value="<?php echo isset($myplugin_organization_name_field) ? esc_attr( $myplugin_organization_name_field ) : ''; ?>" />
       <?php
     }
-    /**
-	 * textarea template
-	 */
+    // callback function for description field
 	function myplugin_settings_description_field_callback() {
+		// Retrieving values from input field using get_option()
 	    $myplugin_description_field = get_option('myplugin_settings_description_field');
 	    ?>
 	    <textarea name="myplugin_settings_description_field" class="regular-text" rows="5"><?php echo isset($myplugin_description_field) ? esc_textarea( $myplugin_description_field ) : ''; ?></textarea>
 	    <?php
 	}
+	//// callback function for vacancy field
 	function myplugin_settings_vacancy_field_callback() {
+		// Retrieving values from input field using get_option()
       $myplugin_vacancy_field = get_option('myplugin_settings_vacancy_field');
       ?>
       <input type="number" name="myplugin_settings_vacancy_field" class="regular-text" value="<?php echo isset($myplugin_vacancy_field) ? esc_attr( $myplugin_vacancy_field ) : ''; ?>" min=1 max=100/>
       <?php
     }
-    /**
-	 * radio field tempalte
-	 */
+    // callback function for title visibility
 	function myplugin_settings_title_visibility_field_callback() {
+		// Retrieving values from input field using get_option()
 	    $myplugin_title_visibility_field = get_option( 'myplugin_settings_title_visibility_field' );
 	    ?>
 	    <label for="value1">
@@ -348,31 +348,37 @@
 	    </label>
 	    <?php
 	}
-		function myplugin_settings_email_visibilty_field_callback() {
+	// // callback function for email visibility
+	function myplugin_settings_email_visibilty_field_callback() {
+		// Retrieving values from input field using get_option()
       $myplugin_email_visibilty_field = get_option('myplugin_settings_email_visibilty_field');
       ?>
       <input type="checkbox" name="myplugin_settings_email_visibilty_field" value="1" <?php checked(1, $myplugin_email_visibilty_field, true); ?> />Show email
       <?php
     }
-     function myplugin_settings_date_field_callback() {
+    // callback function for date field
+    function myplugin_settings_date_field_callback() {
+    	// Retrieving values from input field using get_option()
       $myplugin_date_field = get_option('myplugin_settings_date_field');
       ?>
       <input type="date" name="myplugin_settings_date_field" class="regular-text" value="<?php echo isset($myplugin_date_field) ? esc_attr( $myplugin_date_field ) : ''; ?>" />
       <?php
     }
+    // callback function for color field
     function myplugin_settings_color_field_callback() {
+    	// Retrieving values from input field using get_option()
       $myplugin_color_field = get_option('myplugin_settings_color_field');
       ?>
       <input type="color" name="myplugin_settings_color_field" class="regular-text" value="<?php echo isset($myplugin_color_field) ? esc_attr( $myplugin_color_field ) : ''; ?>" />
       <?php
     }
+    // Function for displaying contents in front end
     public function display_front_end($val){
       global $post;
+      // Initialzing variables with null values
       $test=$title=$email=$date=$myplugin_organization_name_field=$myplugin_description_field=$myplugin_vacancy_field = $myplugin_email_visibilty_field = $myplugin_title_visibility_field =$myplugin_date_field ="";
       $content = "<div>";
-      //write_log('df');
-      // Retrieves a post meta field for the given post ID.
-
+      // Terniary operation is done with retrieving values
       (empty(get_post_meta($post->ID, "_meta-box-title", true))) ? '' : ($title = '<p>Job Type : ' . get_post_meta($post->ID, "_meta-box-title", true) . '</p>') ;
       $date =  get_post_meta($post->ID, '_meta-box-date', true);
       (empty(get_post_meta($post->ID, '_meta-box-email', true))) ? '' : $email = '<p>Email : ' . get_post_meta($post->ID, '_meta-box-email', true) . '</p>';
@@ -383,48 +389,25 @@
       $myplugin_title_visibility_field = get_option( 'myplugin_settings_title_visibility_field' );
       $myplugin_date_field = get_option('myplugin_settings_date_field');
       ($myplugin_email_visibilty_field == 1) ? $email = $email : $email ='';
-      if(!empty($date)|| !empty($myplugin_date_field)){
+      // Checking whether date field is empty or not
+      if(!empty($date) && !empty($myplugin_date_field)){
         if ($date >= $myplugin_date_field) {
-        	# code...
+        	// If date field in metabox is greater than date field in settings is page, job expired
         	$content .= "<p> Job Expired </p>";
-
-
         } else{
-        	// $content .= "Job not Expired";
-          (empty(get_post_meta($post->ID, '_meta-box-date', true))) ? '' : $date= '<p>Last date : $date </p>';
+        	// retrieving data with terniary operation 
+          (empty(get_post_meta($post->ID, '_meta-box-date', true))) ? '' : $date = '<p>Last date :'. $date .'</p>';
+          // Terniary operation to find whether the visbility field checked for title oly or not
         	($myplugin_title_visibility_field == 'value1') ? ($content .= "$title") : ($content .= "$title $myplugin_organization_name_field  $myplugin_description_field $myplugin_vacancy_field $date $email ");
         }
+      } else{
+      	$content .= "<p>Nothing to show</p>";
       }
-
       $content .= "</div>";
       return $val . $content;
 
     }
-    public function register_script(){
-    	//wp_register_script( 'custom_jquery', plugins_url('/js/custom-jquery.js', __FILE__), array('jquery'), '2.5.1' );
-
-    	wp_register_style( 'new_style', plugins_url('/css/style.css', __FILE__), false, '1.0.0', 'all');
-    }
-
-    // use the registered jquery and style above
-
-    public function enqueue_style(){
-    	//wp_enqueue_script('custom_jquery');
-
-    	wp_enqueue_style( 'new_style' );
-    }
   }
+  // Object created
   new JobsSettings();
-  // For debugging purpose
-  if (!function_exists('write_log')) {
-  	function write_log ( $log )  {
-  		if ( true === WP_DEBUG ) {
-  			if ( is_array( $log ) || is_object( $log ) ) {
-  				error_log( print_r( $log, true ) );
-  			} else {
-  				error_log( $log );
-  			}
-  		}
-  	}
-  }
 ?>
