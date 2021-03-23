@@ -8,11 +8,11 @@
   Author URI: http://litty4ever.com/
   License: GPLv2
   */
-  	if( !defined('ABSPATH') ) : exit(); endif;
+  if( !defined('ABSPATH') ) : exit(); endif;
 
-	  /**
-	   * Define plugin constants
-	   */
+  /**
+   * Define plugin constants
+   */
   define( 'MYPLUGIN_PATH', trailingslashit( plugin_dir_path(__FILE__) ) );
   define( 'MYPLUGIN_URL', trailingslashit( plugins_url('/', __FILE__) ) );
   //require_once MYPLUGIN_PATH . 'Settings/settings.php';
